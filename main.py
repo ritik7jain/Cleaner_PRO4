@@ -10,8 +10,8 @@ hide_streamlit_footer = """<style>#MainMenu {visibility: hidden;}
                         footer {visibility: hidden;}</style>"""
 st.markdown(hide_streamlit_footer, unsafe_allow_html=True)
 
-names = ["Ritik", "Raju"]
-usernames = ["104", "admin"]
+names = ["Ritik", "Niharika", "Gaurav", "Arun", "Hiten", "Ashima","Raju"]
+usernames = ["104", "105","4","507","106","107","admin"]
 
 # load hashed passwords
 file_path = Path(__file__).parent / "hashed_pw.pkl"
