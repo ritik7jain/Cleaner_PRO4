@@ -13,7 +13,7 @@ def users(username):
     if df.at[index,'Status']=='Clean':
         last_cleaned_date = datetime.strptime(df.at[index,'Last Cleaned'], '%Y-%m-%d').date()
         new_date=(last_cleaned_date+timedelta(days=2))
-        st.write(f"<span style='color:green'>Room {row['Room']} has already been cleaned</span>", unsafe_allow_html=True)
+        st.write(f"<span style='color:green'>Room {row['Room']} has been cleaned</span>", unsafe_allow_html=True)
         st.write(f"<span style='color:green'>Next Cleaning date is {new_date}</span>", unsafe_allow_html=True)
 
     else:
