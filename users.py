@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date, timedelta, datetime
 
+
 def users(username):
     df = pd.read_csv('data.csv')
     df['Room'] = df['Room'].astype(str)
@@ -10,7 +11,11 @@ def users(username):
     index = searched.index[0]
     row = searched.iloc[0]
     if df.at[index,'Status']=='Clean':
-        st.write(f"Room {row['Room']} has already been cleaned.")
+        last_cleaned_date = datetime.strptime(df.at[index,'Last Cleaned'], '%Y-%m-%d').date()
+        new_date=(last_cleaned_date+timedelta(days=2))
+        st.write(f"<span style='color:green'>Room {row['Room']} has already been cleaned</span>", unsafe_allow_html=True)
+        st.write(f"<span style='color:green'>Next Cleaning date is {new_date}</span>", unsafe_allow_html=True)
+
     else:
         checkbox_placeholder = st.empty()
         new_status = checkbox_placeholder.checkbox(f"Room {row['Room']}: {row['Status']} - Mark as clean")
@@ -21,6 +26,9 @@ def users(username):
             df.at[index, 'Status'] = new_status
             checkbox_placeholder.empty()
             new_date=(datetime.today()+timedelta(days=2)).date()
+            checkbox_placeholder.style.width = "80%"
+            checkbox_placeholder.empty()
+            st.write(f"<span style='color:green'>Status Updated for your room</span>", unsafe_allow_html=True)
+            st.write(f"<span style='color:green'>Next cleaning will be on {new_date}</span>", unsafe_allow_html=True)
 
-            checkbox_placeholder.text(f"Status Updated for your room - next cleaning will be on {new_date}")
         df.to_csv('data.csv', index=False)
