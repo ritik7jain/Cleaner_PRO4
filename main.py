@@ -1,46 +1,37 @@
-import streamlit as st
+import pickle
+from pathlib import Path
+import streamlit as st 
+import streamlit_authenticator as stauth 
 import pandas as pd
-from datetime import date, timedelta, datetime
-
-df = pd.read_csv('data.csv')
-
-df['Room'] = df['Room'].astype(str)
-
+from cleaner import cleaner
+from users import users
+names = ["Ritik", "Raju"]
+usernames = ["104", "admin"]
 st.set_page_config(page_title='Room Cleaning Tracker', page_icon=':broom:')
-sort_by_last_cleaned = st.sidebar.checkbox('Sort by last cleaned date')
+# load hashed passwords
+file_path = Path(__file__).parent / "hashed_pw.pkl"
+with file_path.open("rb") as file:
+    hashed_passwords = pickle.load(file)
 
+authenticator = stauth.Authenticate(names, usernames, hashed_passwords,
+    "PRO4", "abcdef", cookie_expiry_days=30)
 
-search_term = st.text_input("Search for room")
+name, authentication_status, username = authenticator.login("Login", "main")
 
+if authentication_status == False:
+    st.error("Username/password is incorrect")
 
-for index, row in df.iterrows():
-    last_cleaned_date = datetime.strptime(df.at[index,'Last Cleaned'], '%Y-%m-%d').date()
-    days_since_cleaned = (date.today() - last_cleaned_date).days
-    
-    if days_since_cleaned >= 2:  
-        df.at[index,'Status'] = 'Dirty'
-if search_term:
-    try:
-        searched = df[df['Room'].str.contains(search_term, case=False)]  
-        index = searched.index[0]
-        row = searched.iloc[0]
-        if df.at[index,'Status']=='Clean':
-            st.write(f"Room {row['Room']} has already been cleaned.")
-        else:
-            new_status = st.checkbox(f"Room {row['Room']}: {row['Status']} - Mark as clean")
-            if new_status:
-                new_status = 'Clean'
-                if new_status!= df.at[index,'Status']:
-                    df.at[index, 'Last Cleaned'] = str(date.today())
-                df.at[index, 'Status'] = new_status
-    except:
-        st.write(f"No such room found with name {search_term}.")
+if authentication_status == None:
+    st.warning("Please enter your username and password")
 
-show= df[df['Status'] == 'Dirty']
-if sort_by_last_cleaned:
-    show = show.sort_values('Last Cleaned')
-show = show.reset_index(drop=True)
+if authentication_status and username=='admin':
+    st.write("welcome")
+    authenticator.logout("Logout", "sidebar")
+    st.sidebar.title(f"Welcome {name}")
+    cleaner()
 
-st.table(show)
-
-df.to_csv('data.csv', index=False)
+if authentication_status and username!='admin':
+    st.write("welcome")
+    authenticator.logout("Logout", "sidebar")
+    st.sidebar.title(f"Welcome {name}")
+    users(username)
