@@ -7,7 +7,7 @@ from cleaner import cleaner
 from users import users
 from superadmin import superadmin
 
-st.set_page_config(page_title='Room Cleaning Tracker', page_icon=':broom:')
+st.set_page_config(page_title='Room Cleaning Tracker', page_icon=':broom:', theme="dark")
 hide_streamlit_footer = """<style>#MainMenu {visibility: hidden;}
                         footer {visibility: hidden;}</style>"""
 st.markdown(hide_streamlit_footer, unsafe_allow_html=True)
