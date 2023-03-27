@@ -13,7 +13,7 @@ def users(username):
     if df.at[index,'Status']=='Clean':
         last_cleaned_date = datetime.strptime(df.at[index,'Last Cleaned'], '%Y-%m-%d').date()
         new_date=(last_cleaned_date+timedelta(days=2))
-        st.write(f"<span style='color:green'>Room {row['Room']} has been cleaned</span>", unsafe_allow_html=True)
+        st.write(f"<span style='color:green'>Room {row['Room']} has already been cleaned</span>", unsafe_allow_html=True)
         st.write(f"<span style='color:green'>Next Cleaning date is {new_date}</span>", unsafe_allow_html=True)
 
     else:
@@ -26,9 +26,17 @@ def users(username):
             df.at[index, 'Status'] = new_status
             checkbox_placeholder.empty()
             new_date=(datetime.today()+timedelta(days=2)).date()
-            checkbox_placeholder.style.width = "80%"
+            df.at[index,'Comment']=''
             checkbox_placeholder.empty()
             st.write(f"<span style='color:green'>Status Updated for your room</span>", unsafe_allow_html=True)
             st.write(f"<span style='color:green'>Next cleaning will be on {new_date}</span>", unsafe_allow_html=True)
 
-        df.to_csv('data.csv', index=False)
+    df['Comment'] = df['Comment'].fillna('')
+    comment = df.at[index, 'Comment']
+    if comment:
+        st.markdown(f"<h6 style='color:red;margin-top:0;font-family:Arial;'>{comment}</h6>", unsafe_allow_html=True)
+
+
+
+
+    df.to_csv('data.csv', index=False)

@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import date, timedelta, datetime
 
 
-def cleaner():
+def superadmin():
     df = pd.read_csv('data.csv')
 
     df['Room'] = df['Room'].astype(str)
@@ -31,12 +31,24 @@ def cleaner():
                 st.write(f"Room {row['Room']} has already been cleaned.")
                 
             else:
+                checkbox_placeholder = st.empty()
                 comment_placeholder = st.empty()
                 button_placeholder = st.empty()
+                new_status = checkbox_placeholder.checkbox(f"Room {row['Room']}: {row['Status']} - Mark as clean")
                 comment = comment_placeholder.text_input(f"Add a comment for Room {row['Room']}:")
                 if button_placeholder.button("Submit"):
                     df.at[index, 'Comment'] = comment
                     comment_placeholder.write(f"Comment added for Room {row['Room']}.")
+                    comment_placeholder.empty()
+                    button_placeholder.empty()
+                    
+                if new_status:
+                    new_status = 'Clean'
+                    if new_status!= df.at[index,'Status']:
+                        df.at[index, 'Last Cleaned'] = str(date.today())
+                    df.at[index, 'Status'] = new_status
+                    df.at[index,'Comment']=''
+                    checkbox_placeholder.empty()
                     comment_placeholder.empty()
                     button_placeholder.empty()
 
